@@ -1,7 +1,6 @@
 // Import packages
 const express = require('express');
-const { check, validationResult } = require('express-validator');
-
+const { loginValidation } = require('./middlewares/authentication');
 
 // Initialization
 const app = express();
@@ -14,27 +13,15 @@ app.use(express.json())
 
 
 // It's an endpoint '/login'.  
-// check('email').not().isEmpty() = middleware
-app.post('/login', check('email').not().isEmpty(), (req, res, next) => {
-    // TODO: in next session will go the users table in order to check credentialss
-    try {
-        // It given by the express-validator to throw an error incase no matching the defined conditions
-        validationResult(req).throw();
-
-        // No errors 
-        res.status(200).send("We are checking our db");
-    } catch (exception) {
-        // Exceptions throw the validationResult
-        res.status(400).send(exception.errors);
-        console.log(exception);
-    }
+app.post('/login', loginValidation, (req, res, next) => {
+  res.status(200);
 });
 
 
 // Running the server on a specific port. 
 app.listen(port, () => {
-    // Telling us that the server is successfully running.
-    console.log(`The nodejs application is listining on port: ${port}`);
+  // Telling us that the server is successfully running.
+  console.log(`The nodejs application is listining on port: ${port}`);
 });
 
 
