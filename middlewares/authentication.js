@@ -1,40 +1,42 @@
-// We are planning to rely on thsi file (module instead of writing the validation in the index directly)
+// We are planning to rely on this file (module instead of writing the validation in the index directly)
 const loginValidation = (req, res, next) => {
-  const email = req.body.email;
-  const password = req.body.password;
-  if (!email) {
+  // 1. Catch the Credentials
+  const { email, password } = req.body;
+  
+  // 2. Validate the Credentials
+  if (!email && password) {
     res.status(400).send({
       errors: {
-        email: {
-          message: "Email is required"
-        }
+        "email": "Email is empty"
       }
     });
-    return;
   }
-  if (!password) {
+
+  if (!password && email) {
     res.status(400).send({
       errors: {
-        password: {
-          message: "Password is required"
-        }
+        "password": "Password is empty"
       }
     });
-    return;
+  }
+
+  if (!email && !password) {
+    res.status(400).send({
+      errors: {
+        "password": "Password is empty",
+        "email": "Email is empty"
+      }
+    });
   }
   next();
 };
 
 
 const registrationValidation = (data) => {
-  // 1. I have to check if the eamil is not null 
-  // 2. I have to check if the email is a correct email 
-  // 3. I have to check if the password is not null
-  // 4. I have to check if the confirm password is not null
-  // 5. I have to check if the confirm password is matching the password. 
-  // 6. I have to check if the first name is not null.
+
 }
 
+// JS export 
 module.exports = {
   loginValidation: loginValidation,
   registrationValidation: registrationValidation
