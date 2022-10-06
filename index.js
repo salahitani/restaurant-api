@@ -1,6 +1,6 @@
 // Import packages (JS import)
 const express = require('express');
-const { loginValidation } = require('./middlewares/authentication');
+const { loginValidation, registrationValidation } = require('./middlewares/authentication');
 
 // Initialization
 const app = express()
@@ -18,6 +18,16 @@ app.post('/login', loginValidation, (req, res, next) => {
   // 4. return the token the user.
   res.status(200).send({
     token: "to be retreived"
+  })
+
+});
+
+app.post('/register', registrationValidation, (req, res, next) => {
+  // 3. We have to go the database in order to validate it. 
+
+  // 4. return the token the user.
+  res.status(200).send({
+    token: "Registration Done"
   })
 
 });
