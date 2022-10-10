@@ -1,5 +1,5 @@
-
-var validator = require("email-validator");
+// var validator = require("email-validator");
+const { validateEmail, validatePassword } = require('../utils/validator');
 
 // We are planning to rely on this file (module instead of writing the validation in the index directly)
 
@@ -34,43 +34,43 @@ const loginValidation = (req, res, next) => {
       }
     });
   }
- 
+  next();
 };
 
 
 const registrationValidation = (req, res, next) => {
   // 1. Catch the Credentials
-  const { fName, lName, email, password, confirmpassword } = req.body;
+  const { firstName, lastName, email, password, confirmPassword } = req.body;
 
   // 2. Validate the Credentials
-  if (!fName) {
+  if (!firstName) {
     res.status(400).send({
       errors: {
-        "fName": "First Name is empty"
+        "firstName": "First Name is empty"
       }
     });
   }
 
-  if (fName && !isNaN(fName)) {
+  if (!isNaN(firstName)) {
     res.status(400).send({
       errors: {
-        "fName": "First Name Should not be a number"
+        "firstName": "First Name Should not be a number"
       }
     });
   }
 
-  if (!lName) {
+  if (!lastName) {
     res.status(400).send({
       errors: {
-        "lName": "Last Name is empty"
+        "lastName": "Last Name is empty"
       }
     });
   }
 
-  if (lName && !isNaN(lName)) {
+  if (!isNaN(lastName)) {
     res.status(400).send({
       errors: {
-        "lName": "Last Name Should not be a number"
+        "lastName": "Last Name Should not be a number"
       }
     });
   }
@@ -83,7 +83,7 @@ const registrationValidation = (req, res, next) => {
     });
   }
 
-  if (email && !validator.validate(email)) {
+  if (!validateEmail(email)) {
     res.status(400).send({
       errors: {
         "email": "Wrong Email Format"
@@ -99,26 +99,26 @@ const registrationValidation = (req, res, next) => {
     });
   }
 
-  if (password.length < 6) {
+  if(!validatePassword(password)) {
     res.status(400).send({
       errors: {
-        "password": "Password is Short"
+        "password": "Your passowrd is out of our criteria"
       }
     });
   }
 
-  if (!confirmpassword) {
+  if (!confirmPassword) {
     res.status(400).send({
       errors: {
-        "confirmpassword": "Confirm Password is Empty"
+        "confirmPassword": "Confirm Password is Empty"
       }
     });
   }
 
-  if (password != confirmpassword) {
+  if (password !== confirmPassword) {
     res.status(400).send({
       errors: {
-        "confirmpassword": "Password and Confirmed Password do not match"
+        "confirmPassword": "Password and Confirmed Password do not match"
       }
     });
   }
