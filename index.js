@@ -1,6 +1,20 @@
 // Import packages (JS import)
 const express = require('express');
 const { loginValidation, registrationValidation } = require('./middlewares/authentication');
+const mongoose = require('mongoose');
+
+mongoose.connect('mongodb://localhost:27017');
+
+mongoose.connection.on('connected', () => {
+  console.log('Connected');
+});
+
+mongoose.connection.on('error', () => {
+  console.log('Disconnected');
+});
+
+require('./models/user');
+
 
 // Initialization
 const app = express()
@@ -10,6 +24,18 @@ const port = 8080;
 
 // Configuration: We are telling the server, that we are going to send/receive JSON formats.  
 app.use(express.json())
+
+
+app.post('/add-random', (req, res, next) => {
+    const User = mongoose.model('user-format');
+    const user = new User({ email: "khaled.ra@hotmail.com", firstName: 'hello',lastName: 'ramadan' });
+    user.save().then(() => {
+      res.status(201).send("Haliluya")
+    }).catch(exception => {
+      res.status(400).send(exception)
+    });
+
+});
 
 
 app.post('/login', loginValidation, (req, res, next) => {
