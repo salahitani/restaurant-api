@@ -6,8 +6,8 @@ const path = require('path');
 
 // installed
 const express = require('express');
-const { loginValidation, registrationValidation } = require('./middlewares/authentication');
-const { tokenretrieve } = require('./middlewares/tokenretrieve');
+const { loginValidation, registrationValidation, encryptPassword, generateToken } = require('./middlewares/authentication');
+const { saveUser } = require('./controllers/user');
 const mongoose = require('mongoose');
 
 
@@ -62,8 +62,11 @@ app.post('/login', loginValidation, (req, res, next) => {
 });
 
 // The below code will be refactored.
-app.post('/register', registrationValidation, tokenretrieve, (req, res, next) => {
-  
+app.post('/register', registrationValidation, encryptPassword, saveUser, generateToken, (req, res, next) => {
+  const token = res.locals.token;
+  res.status(200).json({
+    token
+  });
 });
 
 

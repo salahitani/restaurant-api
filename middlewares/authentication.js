@@ -1,15 +1,15 @@
-// var validator = require("email-validator");
+
+const crypto = require('crypto');
+const jwt = require('jsonwebtoken');
+const fs = require('fs');
+const path = require('path');
+
 const { validateEmail, validatePassword } = require('../utils/validator');
 
 // We are planning to rely on this file (module instead of writing the validation in the index directly)
-
-
-
 const loginValidation = (req, res, next) => {
-  // 1. Catch the Credentials
   const { email, password } = req.body;
 
-  // 2. Validate the Credentials
   if (!email && password) {
     res.status(400).send({
       errors: {
@@ -39,10 +39,8 @@ const loginValidation = (req, res, next) => {
 
 
 const registrationValidation = (req, res, next) => {
-  // 1. Catch the Credentials
   const { firstName, lastName, email, password, confirmPassword } = req.body;
 
-  // 2. Validate the Credentials
   if (!firstName) {
     res.status(400).send({
       errors: {
@@ -99,7 +97,7 @@ const registrationValidation = (req, res, next) => {
     });
   }
 
-  if(!validatePassword(password)) {
+  if (!validatePassword(password)) {
     res.status(400).send({
       errors: {
         "password": "Your passowrd is out of our criteria"
@@ -125,8 +123,25 @@ const registrationValidation = (req, res, next) => {
   next();
 }
 
+const encryptPassword = (req, res, next) => {
+  const { password } = req.body;
+  const salt = crypto.randomBytes(16).toString('hex');
+  const hash = crypto.pbkdf2Sync(password, salt, 1000, 64, 'sha512').toString('hex');
+  res.locals.encryptedPassword = { salt, hash };
+  next();
+};
+
+const generateToken = (req, res, next) => {
+  const id = res.locals.userId;
+  const userToken = jwt.sign({ id }, 'serect-key-dont-share-it');
+  res.locals.token = userToken;
+  next();
+};
+
 // JS export 
 module.exports = {
-  loginValidation: loginValidation,
-  registrationValidation: registrationValidation
+  loginValidation,
+  registrationValidation,
+  encryptPassword,
+  generateToken
 };

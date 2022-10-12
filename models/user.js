@@ -32,7 +32,7 @@ userSchema.post('save', (error, doc, next) => {
   }
 });
 
-// installation
+// configuration
 mongoose.model('user', userSchema);
 
 // modules.export = userModel;

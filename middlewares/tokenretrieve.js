@@ -2,7 +2,6 @@
 const crypto = require('crypto');
 const mongoose = require('mongoose');
 const jwt = require('jsonwebtoken');
-
 const tokenretrieve = (req, res, next) => {
     // 3. We have to go the database in order to validate it. 
     const { password, email, firstName, lastName } = req.body;
