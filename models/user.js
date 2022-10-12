@@ -20,12 +20,19 @@ const userSchema = new mongoose.Schema({
     trim: true,
     required: true
   },
-  // Next session
   hash: String,
   salt: String,
 });
 
+userSchema.post('save', (error, doc, next) => {
+  if (error.name === 'MongoServerError' && error.code === 11000) {
+    next({ error: 'Unique data entered is already in use.' });
+  } else {
+    next(error);
+  }
+});
+
 // installation
-mongoose.model('user-format', userSchema);
+mongoose.model('user', userSchema);
 
 // modules.export = userModel;
