@@ -9,6 +9,8 @@ const express = require('express');
 const { loginValidation, registrationValidation, encryptPassword, generateToken } = require('./middlewares/authentication');
 const { saveUser } = require('./controllers/user');
 const mongoose = require('mongoose');
+const cors = require('cors');
+
 
 
 
@@ -30,6 +32,7 @@ require('./models/user');
 
 // Initialization
 const app = express()
+app.use(cors())
 
 // To be removed from here later on, we are going to use .env it's more professional way. 
 const port = 8080;
