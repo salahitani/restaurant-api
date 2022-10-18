@@ -2,13 +2,15 @@
 const express = require('express');
 const mongoose = require('mongoose');
 const cors = require('cors');
+require('dotenv').config()
 
 // Internal Routes
 const authRouter = require('./api/authentication');
 
+// < ------------------------------------------------------------------------------->
 
 // Temp here
-mongoose.connect('mongodb://localhost:27017/x-company');
+mongoose.connect(process.env.LOCAL_DATABASE_PATH);
 
 mongoose.connection.on('connected', () => {
   console.log('Connected');
@@ -21,11 +23,12 @@ mongoose.connection.on('error', () => {
 require('./models/user');
 
 
+// < ------------------------------------------------------------------------------->
+
 // Initialization
 const app = express()
 
-// To be removed from here later on, we are going to use .env it's more professional way. 
-const port = 8080;
+// < ------------------------------------------------------------------------------->
 
 // Configuration 
 
@@ -36,7 +39,10 @@ app.use(cors())
 // We adding a prefix to the authentications apis
 app.use('/v1/api/auth', authRouter);
 
+// < ------------------------------------------------------------------------------->
+
 // Running the server on a specific port. 
+const port = process.env.PORT;
 app.listen(port, () => {
   // Telling us that the server is successfully running.
   console.log(`The nodejs application is listining on port: ${port}`);
