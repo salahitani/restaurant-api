@@ -1,36 +1,19 @@
+// < ----Imports----------------------------------------------------------------------->
+
 // Installed packages
 const express = require('express');
-const mongoose = require('mongoose');
 const cors = require('cors');
 require('dotenv').config()
 
-// Internal Routes
+// Internal Imports
 const authRouter = require('./api/authentication');
+require('./db-connection');
 
-// < ------------------------------------------------------------------------------->
+// < ----Initialization----------------------------------------------------------------------->
 
-// Temp here
-mongoose.connect(process.env.LOCAL_DATABASE_PATH);
-
-mongoose.connection.on('connected', () => {
-  console.log('Connected');
-});
-
-mongoose.connection.on('error', () => {
-  console.log('Disconnected');
-});
-
-require('./models/user');
-
-
-// < ------------------------------------------------------------------------------->
-
-// Initialization
 const app = express()
 
-// < ------------------------------------------------------------------------------->
-
-// Configuration 
+// < ----Configuration----------------------------------------------------------------------->
 
 // We are telling the server, that we are going to send/receive JSON formats.  
 app.use(express.json())
@@ -39,7 +22,7 @@ app.use(cors())
 // We adding a prefix to the authentications apis
 app.use('/v1/api/auth', authRouter);
 
-// < ------------------------------------------------------------------------------->
+// < ----Running the app----------------------------------------------------------------------->
 
 // Running the server on a specific port. 
 const port = process.env.PORT;
