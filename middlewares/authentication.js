@@ -42,7 +42,7 @@ const registrationValidation = (req, res, next) => {
   const { firstName, lastName, email, password, confirmPassword } = req.body;
 
   if (!firstName) {
-    res.status(400).send({
+    return res.status(400).send({
       errors: {
         "firstName": "First Name is empty"
       }
@@ -50,7 +50,7 @@ const registrationValidation = (req, res, next) => {
   }
 
   if (!isNaN(firstName)) {
-    res.status(400).send({
+    return res.status(400).send({
       errors: {
         "firstName": "First Name Should not be a number"
       }
@@ -58,7 +58,7 @@ const registrationValidation = (req, res, next) => {
   }
 
   if (!lastName) {
-    res.status(400).send({
+    return res.status(400).send({
       errors: {
         "lastName": "Last Name is empty"
       }
@@ -66,7 +66,7 @@ const registrationValidation = (req, res, next) => {
   }
 
   if (!isNaN(lastName)) {
-    res.status(400).send({
+    return res.status(400).send({
       errors: {
         "lastName": "Last Name Should not be a number"
       }
@@ -74,7 +74,7 @@ const registrationValidation = (req, res, next) => {
   }
 
   if (!email) {
-    res.status(400).send({
+    return res.status(400).send({
       errors: {
         "email": "Email is empty"
       }
@@ -82,7 +82,7 @@ const registrationValidation = (req, res, next) => {
   }
 
   if (!validateEmail(email)) {
-    res.status(400).send({
+    return res.status(400).send({
       errors: {
         "email": "Wrong Email Format"
       }
@@ -90,7 +90,7 @@ const registrationValidation = (req, res, next) => {
   }
 
   if (!password) {
-    res.status(400).send({
+    return res.status(400).send({
       errors: {
         "password": "Password is Empty"
       }
@@ -98,7 +98,7 @@ const registrationValidation = (req, res, next) => {
   }
 
   if (!validatePassword(password)) {
-    res.status(400).send({
+    return res.status(400).send({
       errors: {
         "password": "Your passowrd is out of our criteria"
       }
@@ -106,7 +106,7 @@ const registrationValidation = (req, res, next) => {
   }
 
   if (!confirmPassword) {
-    res.status(400).send({
+    return res.status(400).send({
       errors: {
         "confirmPassword": "Confirm Password is Empty"
       }
@@ -114,7 +114,7 @@ const registrationValidation = (req, res, next) => {
   }
 
   if (password !== confirmPassword) {
-    res.status(400).send({
+    return res.status(400).send({
       errors: {
         "confirmPassword": "Password and Confirmed Password do not match"
       }
@@ -133,7 +133,12 @@ const encryptPassword = (req, res, next) => {
 
 const generateToken = (req, res, next) => {
   const id = res.locals.userId;
-  const userToken = jwt.sign({ id }, 'serect-key-dont-share-it');
+  // less secure
+  // const userToken = jwt.sign({ id }, 'serect-key-dont-share-it');
+  // more secure
+  const secretKeyPath = path.join(__dirname, '..', 'x-company-sec.pem');
+  const secretKey = fs.readFileSync(secretKeyPath, 'utf8');
+  const userToken = jwt.sign({ id }, secretKey, { algorithm: 'RS256' });
   res.locals.token = userToken;
   next();
 };
