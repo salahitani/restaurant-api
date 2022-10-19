@@ -1,10 +1,10 @@
 
-const crypto = require('crypto');
 const jwt = require('jsonwebtoken');
 const fs = require('fs');
 const path = require('path');
 
-const { validateEmail, validatePassword } = require('../utils/validator');
+const ValidatorUtils = require('../utils/validator');
+const EncyprtionUtils = require('../utils/encryption');
 
 // We are planning to rely on this file (module instead of writing the validation in the index directly)
 const loginValidation = (req, res, next) => {
@@ -40,7 +40,7 @@ const loginValidation = (req, res, next) => {
 
 const registrationValidation = (req, res, next) => {
   const { firstName, lastName, email, password, confirmPassword } = req.body;
-
+  const validatorUtils = new ValidatorUtils();
   if (!firstName) {
     return res.status(400).send({
       errors: {
@@ -81,7 +81,7 @@ const registrationValidation = (req, res, next) => {
     });
   }
 
-  if (!validateEmail(email)) {
+  if (!validatorUtils.validateEmail(email)) {
     return res.status(400).send({
       errors: {
         "email": "Wrong Email Format"
@@ -97,7 +97,7 @@ const registrationValidation = (req, res, next) => {
     });
   }
 
-  if (!validatePassword(password)) {
+  if (!validatorUtils.validatePassword(password)) {
     return res.status(400).send({
       errors: {
         "password": "Your passowrd is out of our criteria"
@@ -125,14 +125,15 @@ const registrationValidation = (req, res, next) => {
 
 const encryptPassword = (req, res, next) => {
   const { password } = req.body;
-  const salt = crypto.randomBytes(16).toString('hex');
-  const hash = crypto.pbkdf2Sync(password, salt, 1000, 64, 'sha512').toString('hex');
+  const encyprtionUtils = new EncyprtionUtils();
+  const { salt, hash } = encyprtionUtils.encryptPassword(password);
   res.locals.encryptedPassword = { salt, hash };
   next();
 };
 
 const generateToken = (req, res, next) => {
-  const id = res.locals.userId;
+  const { _id } = res.locals.user; // ObjectId
+  const id = _id.toString(); // Id
   // less secure
   // const userToken = jwt.sign({ id }, 'serect-key-dont-share-it');
   // more secure
@@ -143,10 +144,23 @@ const generateToken = (req, res, next) => {
   next();
 };
 
+const validatePassword = (req, res, next) => {
+  const { hash, salt } = res.locals.user;
+  const { password } = req.body;
+  const encyprtionUtils = new EncyprtionUtils();
+  const  hashedPassword = encyprtionUtils.getHashedPassword(password, salt);
+  if(hash === hashedPassword) {
+    next();
+    return;
+  }
+	return res.status(404).send({ 'error': 'Wrong email or password' });
+};
+
 // JS export 
 module.exports = {
   loginValidation,
   registrationValidation,
   encryptPassword,
-  generateToken
+  generateToken,
+  validatePassword
 };
