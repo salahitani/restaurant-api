@@ -7,6 +7,8 @@ require('dotenv').config()
 
 // Internal Imports
 const authRouter = require('./api/authentication');
+const restaurantRouter = require('./api/restaurant');
+
 require('./db-connection');
 
 // < ----Initialization----------------------------------------------------------------------->
@@ -20,7 +22,8 @@ app.use(express.json())
 // We allowing the localhost to access our code.
 app.use(cors())
 // We adding a prefix to the authentications apis
-app.use('/v1/api/auth', authRouter);
+app.use('/api/v1/auth', authRouter);
+app.use('/api/v1/restaurant', restaurantRouter);
 
 // < ----Running the app----------------------------------------------------------------------->
 

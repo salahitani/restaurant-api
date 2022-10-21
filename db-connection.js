@@ -12,5 +12,6 @@ mongoose.connection.on('error', () => {
 });
 
 require('./models/user');
+require('./models/restaurant');
 
 module.exports = mongoose;
