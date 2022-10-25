@@ -23,5 +23,14 @@ router.get('/:id', (req, res, next) => {
   });
 });
 
+router.get('/', (req, res, next) => {
+  const RestaurantModel = mongoose.model('restaurant');
+  RestaurantModel.find().then(data => {
+    res.status(200).json({
+      data
+    })
+  });
+});
+
 
 module.exports = router;
