@@ -16,6 +16,10 @@ const restaurantSchema = new mongoose.Schema({
   cuisine: {
     type: String,
     required: true
+  },
+  createdAt: {
+    type: Date,
+    default: Date.now
   }
 });
 

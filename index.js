@@ -4,6 +4,8 @@
 const express = require('express');
 const cors = require('cors');
 require('dotenv').config()
+const bodyParser = require('body-parser');
+
 
 // Internal Imports
 const authRouter = require('./api/authentication');
@@ -19,6 +21,11 @@ const app = express()
 
 // We are telling the server, that we are going to send/receive JSON formats.  
 app.use(express.json())
+app.use(bodyParser.urlencoded());
+app.use(bodyParser.urlencoded({ extended: true }));
+
+// Definition of public directory
+app.use(express.static(__dirname + '/assets'));
 // We allowing the localhost to access our code.
 app.use(cors())
 // We adding a prefix to the authentications apis
