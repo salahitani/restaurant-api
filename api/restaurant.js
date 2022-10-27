@@ -3,23 +3,34 @@ const mongoose = require('mongoose');
 const multer = require('multer');
 const router = express.Router();
 
+const getFileExtension = (file) => {
+  const extensionArray = file.mimetype.split('/');
+  let fileExtension = extensionArray[extensionArray.length - 1];
+  if (fileExtension = 'svg+xml') {
+    fileExtension = fileExtension.split('+')[0];
+  }
+  return fileExtension;
+};
+
 const storage = multer.diskStorage({
-  destination: function (req, file, cb) {
+  destination: (req, file, cb) => {
     cb(null, 'assets')
   },
-  filename: function (req, file, cb) {
-    let extArray = file.mimetype.split("/");
-    let extension = extArray[extArray.length - 1];
-    cb(null, file.fieldname + '-' + Date.now() + '.' + extension)
+  filename:  (req, file, cb) => {
+    const extension = getFileExtension(file);
+    cb(null, `${file.fieldname}-${Date.now()}.${extension}`);
   }
-})
+});
 
 router.post('/upload-logo', multer({ storage }).single('logo'), (req, res, next) => {
-
+  const filename = req.file.filename;
+  res.status(201).json({
+    filename
+  });
 });
 
 router.post('/', (req, res, next) => {
-  const { name, description, cuisine } = req.body;
+  const { name, description, cuisine, logo } = req.body;
   const RestaurantModel = mongoose.model('restaurant');
   const restaurant = new RestaurantModel({ name, description, cuisine, logo });
   restaurant.save().then((data) => {
@@ -27,9 +38,6 @@ router.post('/', (req, res, next) => {
       data
     })
   });
-  res.status(200).json({
-    data: ""
-  })
 });
 
 router.get('/:id', (req, res, next) => {
