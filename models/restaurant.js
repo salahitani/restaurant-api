@@ -1,4 +1,5 @@
 const mongoose = require('mongoose');
+const ObjectId = require('mongodb').ObjectID;
 
 const restaurantSchema = new mongoose.Schema({
   name: {
@@ -20,6 +21,10 @@ const restaurantSchema = new mongoose.Schema({
   createdAt: {
     type: Date,
     default: Date.now
+  },
+  createdBy: {
+    type: ObjectId,
+    required: true
   }
 });
 

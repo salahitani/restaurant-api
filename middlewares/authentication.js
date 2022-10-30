@@ -144,6 +144,23 @@ const generateToken = (req, res, next) => {
   next();
 };
 
+const verifyToken = (req, res, next) => {
+  const bearertoken = req.header('Authorization');
+  if(!bearertoken) {
+    return res.status(401).send("You are not authorized.");
+  }
+  const token = bearertoken.replace("Bearer ", "");
+  const publicKeyPath = path.join(__dirname, '..', 'x-company-pub.pem');
+  const publicKey = fs.readFileSync(publicKeyPath, 'utf8');
+  try {
+    const { id } = jwt.verify(token, publicKey);
+    res.locals.userId = id;
+    next();
+  } catch (exception) {
+    return res.status(401).send("Token is malformatted.")
+  }
+};
+
 const validatePassword = (req, res, next) => {
   const { hash, salt } = res.locals.user;
   const { password } = req.body;
@@ -162,5 +179,6 @@ module.exports = {
   registrationValidation,
   encryptPassword,
   generateToken,
-  validatePassword
+  validatePassword,
+  verifyToken
 };
