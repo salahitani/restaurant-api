@@ -44,12 +44,17 @@ router.post('/', verifyToken, (req, res, next) => {
 });
 
 router.get('/:id', (req, res, next) => {
-  const id = req.params.id
+  const id = req.params.id;
   const RestaurantModel = mongoose.model('restaurant');
   RestaurantModel.findById(id).then(data => {
+    if(!data) {
+      return res.status(404).send('Restaurant not found.')
+    }
     res.status(200).json({
       data
-    })
+    });
+  }).catch(exception => {
+      res.status(500).send(exception);
   });
 });
 
