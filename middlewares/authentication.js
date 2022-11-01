@@ -40,84 +40,51 @@ const loginValidation = (req, res, next) => {
 
 const registrationValidation = (req, res, next) => {
   const { firstName, lastName, email, password, confirmPassword } = req.body;
+  const errors = {};
   const validatorUtils = new ValidatorUtils();
   if (!firstName) {
-    return res.status(400).send({
-      errors: {
-        "firstName": "First Name is empty"
-      }
-    });
+    errors.firstName = 'First name is empty';
   }
 
-  if (!isNaN(firstName)) {
-    return res.status(400).send({
-      errors: {
-        "firstName": "First Name Should not be a number"
-      }
-    });
+  if (firstName && !isNaN(firstName)) {
+    errors.firstName = 'First name should not be a number';
   }
 
   if (!lastName) {
-    return res.status(400).send({
-      errors: {
-        "lastName": "Last Name is empty"
-      }
-    });
+    errors.lastName = 'Last name is empty';
   }
 
-  if (!isNaN(lastName)) {
-    return res.status(400).send({
-      errors: {
-        "lastName": "Last Name Should not be a number"
-      }
-    });
+  if (lastName && !isNaN(lastName)) {
+    errors.lastName = 'Last name should not be a number';
   }
 
   if (!email) {
-    return res.status(400).send({
-      errors: {
-        "email": "Email is empty"
-      }
-    });
+    errors.email = 'Email is empty';
   }
 
-  if (!validatorUtils.validateEmail(email)) {
-    return res.status(400).send({
-      errors: {
-        "email": "Wrong Email Format"
-      }
-    });
+  if (email && !validatorUtils.validateEmail(email)) {
+    errors.email = 'Wrong email format';
   }
 
   if (!password) {
-    return res.status(400).send({
-      errors: {
-        "password": "Password is Empty"
-      }
-    });
+    errors.password = 'Password is empty';
   }
 
-  if (!validatorUtils.validatePassword(password)) {
-    return res.status(400).send({
-      errors: {
-        "password": "Your passowrd is out of our criteria"
-      }
-    });
+  if (password && !validatorUtils.validatePassword(password)) {
+    errors.password = 'Your passowrd is out of our criteria';
   }
 
   if (!confirmPassword) {
-    return res.status(400).send({
-      errors: {
-        "confirmPassword": "Confirm Password is Empty"
-      }
-    });
+    errors.confirmPassword = "Confirm password is empty";
   }
 
   if (password !== confirmPassword) {
+    errors.confirmPassword = "Password and confirmed password do not match";
+  }
+  const errorsKeys = Object.keys(errors);
+  if (errorsKeys.length) {
     return res.status(400).send({
-      errors: {
-        "confirmPassword": "Password and Confirmed Password do not match"
-      }
+      errors
     });
   }
   next();
@@ -148,12 +115,12 @@ const validatePassword = (req, res, next) => {
   const { hash, salt } = res.locals.user;
   const { password } = req.body;
   const encyprtionUtils = new EncyprtionUtils();
-  const  hashedPassword = encyprtionUtils.getHashedPassword(password, salt);
-  if(hash === hashedPassword) {
+  const hashedPassword = encyprtionUtils.getHashedPassword(password, salt);
+  if (hash === hashedPassword) {
     next();
     return;
   }
-	return res.status(404).send({ 'error': 'Wrong email or password' });
+  return res.status(404).send({ 'error': 'Wrong email or password' });
 };
 
 // JS export 
