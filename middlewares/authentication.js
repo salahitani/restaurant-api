@@ -10,18 +10,17 @@ const EncyprtionUtils = require('../utils/encryption');
 const loginValidation = (req, res, next) => {
   const { email, password } = req.body;
   const errors = {};
-
-
-  if (!email && password) {
+  const validatorUtils = new ValidatorUtils();
+  
+  if (!email) {
     errors.email = 'Email is empty';
   }
 
-  if (!password && email) {
-    errors.password = 'Password is empty';
+  if (email && !validatorUtils.validateEmail(email)) {
+    errors.email = 'Wrong email format';
   }
 
-  if (!email && !password) {
-    errors.email = 'Email is empty';
+  if (!password) {
     errors.password = 'Password is empty';
   }
 
@@ -134,7 +133,7 @@ const validatePassword = (req, res, next) => {
     next();
     return;
   }
-  return res.status(404).send({ 'errors': 'Wrong email or password' });
+  return res.status(404).send({ 'errors': { generic: 'Wrong email or password' } });
 };
 
 // JS export 
