@@ -22,7 +22,7 @@ const checkUserByEmail = (req, res, next) => {
       res.locals.user = user;
       return next();
     }
-    return res.status(404).send({ 'error': 'Wrong email or password' });
+    return res.status(404).send({ 'errors': 'Wrong email or password' });
   });
 }
 

@@ -9,29 +9,26 @@ const EncyprtionUtils = require('../utils/encryption');
 // We are planning to rely on this file (module instead of writing the validation in the index directly)
 const loginValidation = (req, res, next) => {
   const { email, password } = req.body;
+  const errors = {};
+
 
   if (!email && password) {
-    res.status(400).send({
-      errors: {
-        "email": "Email is empty"
-      }
-    });
+    errors.email = 'Email is empty';
   }
 
   if (!password && email) {
-    res.status(400).send({
-      errors: {
-        "password": "Password is empty"
-      }
-    });
+    errors.password = 'Password is empty';
   }
 
   if (!email && !password) {
-    res.status(400).send({
-      errors: {
-        "password": "Password is empty",
-        "email": "Email is empty"
-      }
+    errors.email = 'Email is empty';
+    errors.password = 'Password is empty';
+  }
+
+  const errorsKeys = Object.keys(errors);
+  if (errorsKeys.length) {
+    return res.status(400).send({
+      errors
     });
   }
   next();
@@ -113,7 +110,7 @@ const generateToken = (req, res, next) => {
 
 const verifyToken = (req, res, next) => {
   const bearertoken = req.header('Authorization');
-  if(!bearertoken) {
+  if (!bearertoken) {
     return res.status(401).send("You are not authorized.");
   }
   const token = bearertoken.replace("Bearer ", "");
@@ -137,7 +134,7 @@ const validatePassword = (req, res, next) => {
     next();
     return;
   }
-  return res.status(404).send({ 'error': 'Wrong email or password' });
+  return res.status(404).send({ 'errors': 'Wrong email or password' });
 };
 
 // JS export 

@@ -9,6 +9,7 @@ require('dotenv').config()
 // Internal Imports
 const authRouter = require('./api/authentication');
 const restaurantRouter = require('./api/restaurant');
+const hotelRouter = require('./api/hotel');
 
 require('./db-connection');
 
@@ -27,6 +28,7 @@ app.use(cors())
 // We adding a prefix to the authentications apis
 app.use('/api/v1/auth', authRouter);
 app.use('/api/v1/restaurant', restaurantRouter);
+app.use('/api/v1/hotel', hotelRouter);
 
 // < ----Running the app----------------------------------------------------------------------->
 
