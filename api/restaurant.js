@@ -43,6 +43,21 @@ router.post('/', verifyToken, (req, res, next) => {
   });
 });
 
+router.put('/:id', (req, res, next) => {
+  const id = req.params.id;
+  const RestaurantModel = mongoose.model('restaurant');
+  RestaurantModel.findByIdAndUpdate(id, req.body).then(data => {
+    if(!data) {
+      return res.status(404).send('Restaurant not found.')
+    }
+    res.status(201).json({
+      data
+    });
+  }).catch(exception => {
+      res.status(500).send(exception);
+  });
+});
+
 router.get('/:id', (req, res, next) => {
   const id = req.params.id;
   const RestaurantModel = mongoose.model('restaurant');
