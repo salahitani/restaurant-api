@@ -84,5 +84,15 @@ router.get('/', verifyToken, (req, res, next) => {
   });
 });
 
+router.delete('/:id', verifyToken,(req, res, next) => {
+  const RestaurantModel = mongoose.model('restaurant');
+  const id = req.params.id;
+  RestaurantModel.findByIdAndDelete(id).then(() => {
+    res.status(200).json({
+      status: "DELTED"
+    });
+  });
+});
+
 
 module.exports = router;
